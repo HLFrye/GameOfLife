@@ -9,13 +9,13 @@ I'd been looking for an excuse to play with Gui.cs.  My first computer had a lot
 In addition to wanting to do something with Gui.cs, I had been thinking a lot about creating an implementation of Life after a recent discussion with some of my teammates about different ways to implement the game.  I'd wanted to try an implementation that wasn't set on a fixed board size, and so creating this gave me the opportunity to scratch that itch as well.
 
 ## Progress
-[x] Initial setup with Gui.cs
-[x] Create game board widget
-[x] Animate the game board
-[x] Controls to start and stop animation
-[x] Ability to move cursor around game board to edit it
-[ ] Ability to toggle cells on and off
-[ ] Add widgets to display stats and health
-[ ] Add widgets to control viewport
-[ ] Add proper game of life processing
-[ ] Ability to add preset entities to board
+- [x] Initial setup with Gui.cs
+- [x] Create game board widget
+- [x] Animate the game board
+- [x] Controls to start and stop animation
+- [x] Ability to move cursor around game board to edit it
+- [ ] Ability to toggle cells on and off
+- [ ] Add widgets to display stats and health
+- [ ] Add widgets to control viewport
+- [ ] Add proper game of life processing
+- [ ] Ability to add preset entities to board
