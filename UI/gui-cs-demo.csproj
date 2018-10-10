@@ -12,6 +12,7 @@
     <EmbeddedResource Include="Entities\HiveNudger2.cells" />
     <PackageReference Include="Terminal.Gui" Version="0.16.0" />
     <ProjectReference Include="..\LifeInterface\LifeInterface.csproj" />
+    <ProjectReference Include="..\LifeLib\LifeLib.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using System;
 using Terminal.Gui;
 using LifeInterface;
+using LifeLib;
 
 class GameView: View 
 {
@@ -15,7 +16,7 @@ class GameView: View
             var rng = new Random();
             _charFunc = (a, b) => (rng.Next() % 2) == 0;
             _focus = new Point(1, 1);
-            _game = null;
+            _game = new Life.LifeGame();
         }
 
     public override bool CanFocus { get; set; } = false;

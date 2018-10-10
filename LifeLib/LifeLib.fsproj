@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../LifeInterface/LifeInterface.csproj" />
+
     <Compile Include="Library.fs" />
   </ItemGroup>
 

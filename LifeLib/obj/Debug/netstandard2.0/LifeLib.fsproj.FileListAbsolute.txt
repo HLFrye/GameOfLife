@@ -1,0 +1,7 @@
+C:\dev\gui-cs-life\LifeLib\bin\Debug\netstandard2.0\LifeLib.deps.json
+C:\dev\gui-cs-life\LifeLib\bin\Debug\netstandard2.0\LifeLib.dll
+C:\dev\gui-cs-life\LifeLib\bin\Debug\netstandard2.0\LifeLib.pdb
+C:\dev\gui-cs-life\LifeLib\bin\Debug\netstandard2.0\LifeInterface.dll
+C:\dev\gui-cs-life\LifeLib\bin\Debug\netstandard2.0\LifeInterface.pdb
+C:\dev\gui-cs-life\LifeLib\obj\Debug\netstandard2.0\LifeLib.dll
+C:\dev\gui-cs-life\LifeLib\obj\Debug\netstandard2.0\LifeLib.pdb

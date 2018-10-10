@@ -957,6 +957,16 @@
         "compile": {
           "ref/netstandard1.2/System.Threading.Timer.dll": {}
         }
+      },
+      "LifeInterface/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "compile": {
+          "bin/placeholder/LifeInterface.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LifeInterface.dll": {}
+        }
       }
     }
   },
@@ -3838,11 +3848,17 @@
         "system.threading.timer.4.0.1.nupkg.sha512",
         "system.threading.timer.nuspec"
       ]
+    },
+    "LifeInterface/1.0.0": {
+      "type": "project",
+      "path": "../LifeInterface/LifeInterface.csproj",
+      "msbuildProject": "../LifeInterface/LifeInterface.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
       "FSharp.Core >= 4.2.*",
+      "LifeInterface >= 1.0.0",
       "NETStandard.Library >= 2.0.1"
     ]
   },
@@ -3878,7 +3894,11 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\dev\\gui-cs-life\\LifeInterface\\LifeInterface.csproj": {
+              "projectPath": "C:\\dev\\gui-cs-life\\LifeInterface\\LifeInterface.csproj"
+            }
+          }
         }
       }
     },
