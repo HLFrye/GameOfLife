@@ -7,6 +7,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Entities\RPentomino.cells" />
+    <EmbeddedResource Include="Entities\Glider.cells" />
+    <EmbeddedResource Include="Entities\GliderGun.cells" />
+    <EmbeddedResource Include="Entities\HiveNudger2.cells" />
     <PackageReference Include="Terminal.Gui" Version="0.16.0" />
   </ItemGroup>
 
