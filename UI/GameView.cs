@@ -1,10 +1,13 @@
 using System;
 using Terminal.Gui;
+using LifeInterface;
 
 class GameView: View 
 {
     private readonly Func<int, int, bool> _charFunc;
     private Point _focus;
+
+    private readonly ILifeGameInterface _game;
 
     public GameView(int x, int y, int width, int height)
         : base(new Rect(x, y, width, height))
@@ -12,6 +15,7 @@ class GameView: View
             var rng = new Random();
             _charFunc = (a, b) => (rng.Next() % 2) == 0;
             _focus = new Point(1, 1);
+            _game = null;
         }
 
     public override bool CanFocus { get; set; } = false;

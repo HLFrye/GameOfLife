@@ -1,0 +1,8 @@
+C:\dev\gui-cs-life\LifeInterface\bin\Debug\netstandard2.0\LifeInterface.deps.json
+C:\dev\gui-cs-life\LifeInterface\bin\Debug\netstandard2.0\LifeInterface.dll
+C:\dev\gui-cs-life\LifeInterface\bin\Debug\netstandard2.0\LifeInterface.pdb
+C:\dev\gui-cs-life\LifeInterface\obj\Debug\netstandard2.0\LifeInterface.csproj.CoreCompileInputs.cache
+C:\dev\gui-cs-life\LifeInterface\obj\Debug\netstandard2.0\LifeInterface.AssemblyInfoInputs.cache
+C:\dev\gui-cs-life\LifeInterface\obj\Debug\netstandard2.0\LifeInterface.AssemblyInfo.cs
+C:\dev\gui-cs-life\LifeInterface\obj\Debug\netstandard2.0\LifeInterface.dll
+C:\dev\gui-cs-life\LifeInterface\obj\Debug\netstandard2.0\LifeInterface.pdb
