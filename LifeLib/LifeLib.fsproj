@@ -7,7 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="../LifeInterface/LifeInterface.csproj" />
 
-    <Compile Include="Library.fs" />
+    <Compile Include="LifeModule.fs" />
   </ItemGroup>
 
 </Project>
