@@ -5,19 +5,16 @@ using LifeLib;
 
 class GameView: View 
 {
-    private readonly Func<int, int, bool> _charFunc;
     private Point _focus;
 
     private readonly ILifeGameInterface _game;
 
     public GameView(int x, int y, int width, int height)
-        : base(new Rect(x, y, width, height))
-        {
-            var rng = new Random();
-            _charFunc = (a, b) => (rng.Next() % 2) == 0;
-            _focus = new Point(1, 1);
-            _game = new Life.LifeGame();
-        }
+    : base(new Rect(x, y, width, height))
+    {
+        _focus = new Point(1, 1);
+        _game = new Life.LifeGame();
+    }
 
     public override bool CanFocus { get; set; } = false;
 
@@ -53,8 +50,40 @@ class GameView: View
                 }
                 SetNeedsDisplay();
                 return true;
+            case Key.Space:
+                Toggle(_focus.X, _focus.Y);
+                SetNeedsDisplay();
+                return true;
             default: 
                 return false;
+        }
+    }
+
+    public void Update()
+    {
+        _game.Update();
+        SetNeedsDisplay();
+    }
+
+    public void Add(int x, int y)
+    {
+        _game.Add(x, y);
+    }
+
+    public void Remove(int x, int y)
+    {
+        _game.Remove(x, y);
+    }
+
+    private void Toggle(int x, int y)
+    {
+        if (_game.Get(x, y))
+        {
+            _game.Remove(x, y);
+        }
+        else
+        {
+            _game.Add(x, y);
         }
     }
 
@@ -74,7 +103,7 @@ class GameView: View
                     Driver.SetAttribute(ColorScheme.Normal);
                 }
                 Move(x, y);
-                var draw = _charFunc(x, y) ? 'x' : ' ';
+                var draw = _game.Get(x, y) ? 'x' : ' ';
                 Driver.AddRune(draw);
             }
         }
