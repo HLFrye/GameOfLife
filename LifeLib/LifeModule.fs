@@ -11,7 +11,7 @@ open LifeInterface
 
 module Life =
 
-    let private numLiveNeighbors points (x, y) = 
+    let private getNeighbors points (x, y) = 
          [ (-1, -1);
            ( 0, -1);
            ( 1, -1);
@@ -20,34 +20,44 @@ module Life =
            (-1,  1);
            ( 0,  1);
            ( 1,  1) ]
-        |> Seq.map (fun (neighborX, neighborY) -> (x + neighborX, y + neighborY))
-        |> Seq.filter (fun pt -> Seq.contains pt points)
-        |> Seq.length
+        |> Seq.map 
+            ((fun (neighborX, neighborY) -> (x + neighborX, y + neighborY))
+            >> (fun pt -> (Seq.contains pt points, pt)))
+        |> Seq.fold (fun (liveCount, emptyNeighbors) (live, pt) ->
+            match live with
+            | true -> (liveCount + 1, emptyNeighbors)
+            | false -> (liveCount, pt :: emptyNeighbors)) (0, List.empty<(int * int)>)
 
     let private applyRules points =
         let mutable survivors = List.empty<(int * int)>
-        let mutable adjacentDeadCells = Map.empty<(int * int), int>
+        let mutable allAdjacentDeadCells = Map.empty<(int * int), int>
         for point in points do
-            let (liveNeighborCount, deadNeighbors) = numLiveNeighbors points point
+            let (liveNeighborCount, adjacentDeadCells) = getNeighbors points point
+
             match liveNeighborCount with
             | 2
             | 3 -> survivors <- point :: survivors
             | _ -> ()
 
-            match (adjacentDeadCells |> Map.containsKey point) with
-            | false -> adjacentDeadCells <- Map.add point 1 adjacentDeadCells
-            | true -> 
-                let adjacentCount = 
-                    adjacentDeadCells
-                    |> Map.find point
-                    |> (+) 1
-                adjacentDeadCells <- 
-                    adjacentDeadCells
-                    |> Map.remove point
-                    |> Map.add point adjacentCount
+            let updatedAdjacentMap = 
+                adjacentDeadCells
+                |> Seq.fold (fun adjacentDeadCells point ->
+                    match (adjacentDeadCells |> Map.containsKey point) with
+                    | false -> Map.add point 1 adjacentDeadCells
+                    | true -> 
+                        let adjacentCount = 
+                            adjacentDeadCells
+                            |> Map.find point
+                            |> (+) 1
+                        adjacentDeadCells
+                            |> Map.remove point
+                            |> Map.add point adjacentCount
+                ) allAdjacentDeadCells
+
+            allAdjacentDeadCells <- updatedAdjacentMap
 
         let births = 
-            adjacentDeadCells
+            allAdjacentDeadCells
             |> Map.filter (fun _ count -> count = 3)
             |> Map.toSeq
             |> Seq.map (fun (pt, _) -> pt)
@@ -73,7 +83,9 @@ module Life =
                     points
                     |> List.except [(x, y)]
                 points <- filteredList
-            member this.Update() = true
+            member this.Update() = 
+                points <- (applyRules points)
+                true
             member this.CellCount with get() = 
                 points
                 |> List.length
