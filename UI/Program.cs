@@ -2,7 +2,7 @@
 using System.Threading;
 using Terminal.Gui;
 
-class Demo {
+class GameOfLifeApplication {
     static void NewFile()
     {
 
@@ -21,10 +21,10 @@ class Demo {
     static Rect CalcGameRect(Rect parent)
     {
         return new Rect(
-            parent.Left + 10, 
-            parent.Top + 10, 
-            parent.Width - 20, 
-            parent.Height - 20
+            parent.Left, 
+            parent.Top + 2, 
+            parent.Width - 30, 
+            parent.Height - 12
         );
     }
 
@@ -34,7 +34,7 @@ class Demo {
         var top = Application.Top;
 
 	// Creates the top-level window to show
-        var win = new Window (new Rect (0, 1, top.Frame.Width, top.Frame.Height-1), "MyApp");
+        var win = new Window (new Rect (0, 1, top.Frame.Width, top.Frame.Height-1), "Conway's Game of Life");
         top.Add (win);
 
         var gameRect = CalcGameRect(top.Frame);
@@ -49,10 +49,21 @@ class Demo {
             changeSpeedBtn
         );
 
-        var rng = new Random();
         var frame = new FrameView(gameRect, "Life");
-        var gameView = new GameView(0, 0, gameRect.Width - 2, gameRect.Height - 2);
-        frame.Add(gameView);
+        var BoardView = new BoardView(0, 0, gameRect.Width - 2, gameRect.Height - 2);
+     
+        var statsView = new StatView(new Rect(
+            top.Frame.Width - 30,
+            top.Frame.Top + 2,
+            27,
+            top.Frame.Height - 12),
+            BoardView
+        );
+
+        BoardView.Updated += statsView.UpdateStats;
+
+        frame.Add(BoardView);
+        win.Add(statsView);
         win.Add(frame);        
 
 	// Creates a menubar
@@ -66,12 +77,12 @@ class Demo {
                 new MenuItem ("_Quit", "", () => { if (Quit ()) top.Running = false; })
             }),
             new MenuBarItem ("_Insert", new MenuItem [] {
-                new MenuItem("Still Life", "", Insert(gameView, Entities.StillLife)),
-                new MenuItem("Oscillator", "", Insert(gameView, Entities.Oscillator)),
-                new MenuItem("Glider", "", Insert(gameView, Entities.Glider)),
-                new MenuItem("Glider Gun", "", Insert(gameView, Entities.GliderGun)),
-                new MenuItem("Puffer Train", "", Insert(gameView, Entities.PufferTrain)),
-                new MenuItem("R-Pentomino", "", Insert(gameView, Entities.RPentomino))
+                new MenuItem("Still Life", "", Insert(BoardView, Entities.StillLife)),
+                new MenuItem("Oscillator", "", Insert(BoardView, Entities.Oscillator)),
+                new MenuItem("Glider", "", Insert(BoardView, Entities.Glider)),
+                new MenuItem("Glider Gun", "", Insert(BoardView, Entities.GliderGun)),
+                new MenuItem("Puffer Train", "", Insert(BoardView, Entities.PufferTrain)),
+                new MenuItem("R-Pentomino", "", Insert(BoardView, Entities.RPentomino))
             }),
             new MenuBarItem("_Help", new MenuItem [] {
                 new MenuItem("_About", "", HelpAbout)
@@ -80,7 +91,7 @@ class Demo {
         top.Add (menu);
 
 
-        editBtn.Clicked += () => gameView.TakeFocus(win);
+        editBtn.Clicked += () => BoardView.TakeFocus(win);
 
         var autoEvent = new AutoResetEvent(false);
         var started = false;
@@ -101,11 +112,11 @@ class Demo {
         {
             if (started)
             {
-                gameView.Update();
+                BoardView.Update();
                 Application.Refresh();
             }
         }, 
-        autoEvent, 1000, 500);
+        autoEvent, 1000, 250);
 
         Application.Run ();
 
@@ -121,7 +132,7 @@ class Demo {
     throw new NotImplementedException();
   }
 
-  private static Action Insert(GameView game, Entity stillLife)
+  private static Action Insert(BoardView game, Entity stillLife)
   {
     return () => 
     {

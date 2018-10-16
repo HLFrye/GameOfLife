@@ -2,19 +2,21 @@ using System;
 using Terminal.Gui;
 using LifeInterface;
 using LifeLib;
+using System.Diagnostics;
 
-class GameView: View 
+public class BoardView: View 
 {
     private Point _focus;
-
     private readonly ILifeGameInterface _game;
 
-    public GameView(int x, int y, int width, int height)
+    public BoardView(int x, int y, int width, int height)
     : base(new Rect(x, y, width, height))
     {
         _focus = new Point(1, 1);
         _game = new Life.LifeGame();
     }
+
+    public event Action Updated = delegate { };
 
     public override bool CanFocus { get; set; } = false;
 
@@ -58,10 +60,27 @@ class GameView: View
                 return false;
         }
     }
+ 
+  public TimeSpan LastUpdate { get; private set; } = new TimeSpan();
 
-    public void Update()
+  public int NumGenerations { get; private set; }
+
+  internal int GetCellCount()
+  {
+      // TODO
+      return _game.CellCount;
+  }
+
+  public void Update()
     {
+        var watch = new Stopwatch();
+        watch.Start();
         _game.Update();
+        watch.Stop();
+        LastUpdate = watch.Elapsed;
+        NumGenerations++;
+
+        Updated();
         SetNeedsDisplay();
     }
 

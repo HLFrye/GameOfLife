@@ -86,7 +86,8 @@ module Life =
             member this.Update() = 
                 points <- (applyRules points)
                 true
-            member this.CellCount with get() = 
-                points
-                |> List.length
+            member this.CellCount 
+                with get() = 
+                    points
+                    |> List.length
 
