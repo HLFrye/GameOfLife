@@ -3,7 +3,10 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using Terminal.Gui;
 
-class GameOfLifeApplication {
+class GameOfLifeApplication 
+{
+    static PlatformID _platform = Environment.OSVersion.Platform;
+ 
     static void NewFile()
     {
 
@@ -138,20 +141,26 @@ class GameOfLifeApplication {
 
     private static void DisableTheMouse()
     {
-        var InputHandle = GetStdHandle(-10);
-        uint mode;
-        GetConsoleMode(InputHandle, out mode);
-        mode &= ~(uint)16;
-        SetConsoleMode(InputHandle, mode);
+        if (_platform == PlatformID.Win32NT || _platform == PlatformID.Win32S || _platform == PlatformID.Win32Windows)
+        {
+            var InputHandle = GetStdHandle(-10);
+            uint mode;
+            GetConsoleMode(InputHandle, out mode);
+            mode &= ~(uint)16;
+            SetConsoleMode(InputHandle, mode);
+        }
     }
 
     private static void EnableTheMouse()
     {
-        var InputHandle = GetStdHandle(-10);
-        uint mode;
-        GetConsoleMode(InputHandle, out mode);
-        mode |= (uint)16;
-        SetConsoleMode(InputHandle, mode);
+        if (_platform == PlatformID.Win32NT || _platform == PlatformID.Win32S || _platform == PlatformID.Win32Windows)
+        {
+            var InputHandle = GetStdHandle(-10);
+            uint mode;
+            GetConsoleMode(InputHandle, out mode);
+            mode |= (uint)16;
+            SetConsoleMode(InputHandle, mode);
+        }
     }
 
   private static void HelpAbout()
