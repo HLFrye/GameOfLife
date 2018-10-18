@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Threading;
+using System.Runtime.InteropServices;
+using System.Timers;
 using Terminal.Gui;
 
 class GameOfLifeApplication {
@@ -55,7 +56,7 @@ class GameOfLifeApplication {
         var statsView = new StatView(new Rect(
             top.Frame.Width - 30,
             top.Frame.Top + 2,
-            27,
+            28,
             top.Frame.Height - 12),
             BoardView
         );
@@ -93,7 +94,6 @@ class GameOfLifeApplication {
 
         editBtn.Clicked += () => BoardView.TakeFocus(win);
 
-        var autoEvent = new AutoResetEvent(false);
         var started = false;
         startBtn.Clicked += () => 
         {
@@ -101,25 +101,57 @@ class GameOfLifeApplication {
             if (started)
             {
                 startBtn.Text = "Stop";
+                DisableTheMouse();
             }
             else
             {
                 startBtn.Text = "Start";
+                EnableTheMouse();
             }
         };
 
-        var stateTimer = new Timer(x => 
+        var stateTimer = new Timer();
+        stateTimer.AutoReset = false;
+        stateTimer.Elapsed += (sender, e) => 
         {
             if (started)
             {
                 BoardView.Update();
                 Application.Refresh();
             }
-        }, 
-        autoEvent, 1000, 250);
+            stateTimer.Start();
+        };
+        stateTimer.Interval = 50;
+        stateTimer.Start();
+        Application.Run();
+    }
 
-        Application.Run ();
+    [DllImport ("kernel32.dll", SetLastError = true)]
+    static extern IntPtr GetStdHandle (int nStdHandle);
 
+    [DllImport ("kernel32.dll")]
+    static extern bool GetConsoleMode (IntPtr hConsoleHandle, out uint lpMode);
+
+
+    [DllImport ("kernel32.dll")]
+    static extern bool SetConsoleMode (IntPtr hConsoleHandle, uint dwMode);
+
+    private static void DisableTheMouse()
+    {
+        var InputHandle = GetStdHandle(-10);
+        uint mode;
+        GetConsoleMode(InputHandle, out mode);
+        mode &= ~(uint)16;
+        SetConsoleMode(InputHandle, mode);
+    }
+
+    private static void EnableTheMouse()
+    {
+        var InputHandle = GetStdHandle(-10);
+        uint mode;
+        GetConsoleMode(InputHandle, out mode);
+        mode |= (uint)16;
+        SetConsoleMode(InputHandle, mode);
     }
 
   private static void HelpAbout()
