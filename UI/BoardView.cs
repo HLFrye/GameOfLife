@@ -160,7 +160,7 @@ public class BoardView: View
         {
             for (var x = region.Left; x < region.Right; ++x) 
             {
-                if (HasFocus && _focus.X == x && _focus.Y == y)
+                if (HasFocus && _inputMode == InputMode.Editing && _focus.X == x && _focus.Y == y)
                 {
                     Driver.SetAttribute(ColorScheme.Focus);
                 }
