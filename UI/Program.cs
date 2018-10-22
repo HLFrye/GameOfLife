@@ -44,11 +44,13 @@ class GameOfLifeApplication
         var gameRect = CalcGameRect(top.Frame);
 
         var editBtn = new Button(gameRect.X, gameRect.Bottom + 3, "Edit");
-        var startBtn = new Button(editBtn.Frame.Right + 3, gameRect.Bottom + 3, "Start");
+        var moveBtn = new Button(editBtn.Frame.Right + 3, gameRect.Bottom + 3, "Move");
+        var startBtn = new Button(moveBtn.Frame.Right + 3, gameRect.Bottom + 3, "Start");
         var changeSpeedBtn = new Button(startBtn.Frame.Right + 3, gameRect.Bottom + 3, "Change Speed");
 
         win.Add(
             editBtn,
+            moveBtn,
             startBtn,
             changeSpeedBtn
         );
@@ -95,7 +97,8 @@ class GameOfLifeApplication
         top.Add (menu);
 
 
-        editBtn.Clicked += () => BoardView.TakeFocus(win);
+        editBtn.Clicked += () => BoardView.BeginEditMode(win);
+        moveBtn.Clicked += () => BoardView.BeginMoveMode(win);
 
         var started = false;
         startBtn.Clicked += () => 
