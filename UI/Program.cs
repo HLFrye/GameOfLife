@@ -180,10 +180,17 @@ class GameOfLifeApplication
   {
     return () => 
     {
-      foreach (var point in stillLife.Cells)
+      var dlg = new AddEntityDialog(stillLife);
+      Application.Refresh();
+      Application.Run(dlg);
+      if (dlg.Success)
       {
-        game.Add(point.X, point.Y);
+        foreach (var point in dlg.Cells)
+        {
+          game.Add(point.X, point.Y);
+        }
       }  
+      Application.Refresh();
     };
   }
 

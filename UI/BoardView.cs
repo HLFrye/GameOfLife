@@ -114,7 +114,6 @@ public class BoardView: View
 
     internal int GetCellCount()
     {
-        // TODO
         return _game.CellCount;
     }
 

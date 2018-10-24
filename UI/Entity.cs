@@ -5,8 +5,10 @@ using Terminal.Gui;
 
 public class Entity
 {
-  private static IList<Point> ReadLines(IList<string> lines)
+  private static IList<Point> ReadLines(IList<string> lines, out Rect bounds)
   {
+    int mw = 0;
+    int mh = 0;
     var cells = new List<Point>();
     int y = 0;
     foreach (var line in lines)
@@ -18,6 +20,8 @@ public class Entity
         {
           case 'O':
             cells.Add(new Point(x, y));
+            if (x > mw) mw = x;
+            if (y > mh) mh = y;
             break;
           default:
             break;
@@ -26,6 +30,7 @@ public class Entity
       }
       y++;
     }
+    bounds = new Rect(0, 0, mw, mh);
     return cells;
   }
 
@@ -34,7 +39,8 @@ public class Entity
   public Entity(string name, string[] lines)
   {
     Name = name;
-    Cells = ReadLines(lines);
+    Cells = ReadLines(lines, out Rect size);
+    Size = size;
   }
   public Entity(Stream stream)
   {
@@ -56,11 +62,13 @@ public class Entity
           map.Add(line);
         }
       }
-      Cells = ReadLines(map);
+      Cells = ReadLines(map, out Rect size);
+      Size = size;
     }
   }
 
   public string Name { get; private set; }
   public string Description { get; private set; }
   public IList<Point> Cells { get; private set; }
+  public Rect Size { get; private set; }
 }
