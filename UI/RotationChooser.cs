@@ -15,13 +15,42 @@ public class RotationChooser: Button
     {"270 degrees CW", Rotate(270)},
   };
 
-  private static Transform Rotate(int v)
+  private static int IntCos(int degrees)
   {
-    var angle = v * Math.PI/180;
+    switch (degrees)
+    {
+      case 0:
+        return 1;
+      case 90:
+      case 270:
+        return 0;
+      case 180:
+        return -1;
+    }
+    throw new NotImplementedException();
+  }
+
+  private static int IntSin(int degrees)
+  {
+    switch (degrees)
+    {
+      case 0:
+      case 180:
+        return 0;
+      case 90:
+        return 1;
+      case 270:
+        return -1;
+    }
+    throw new NotImplementedException();
+  }
+
+  private static Transform Rotate(int angle)
+  {
     return point => 
     {
-      var newX = (int)(point.X * Math.Cos(angle) - point.Y * Math.Sin(angle));
-      var newY = (int)(point.X * Math.Sin(angle) + point.X * Math.Cos(angle));
+      var newX = point.X * IntCos(angle) - point.Y * IntSin(angle);
+      var newY = point.X * IntSin(angle) + point.Y * IntCos(angle);
 
       var newPt = new Point(newX, newY);
       return newPt;
@@ -44,22 +73,34 @@ public class RotationChooser: Button
     var tl = new Toplevel();
     var keys = _transforms.Keys.ToList();
     var height = keys.Count;
-    var width = keys.Max(x => x.Length);
+    var width = keys.Max(x => x.Length) + 1;
   
+    var winX = 0;
+    var winY = 0;
+    View view = this;
+    while (view != null)
+    {
+      winX += view.Frame.Location.X;
+      winY += view.Frame.Location.Y;
+      
+      view = view.SuperView;
+    }
 
-    var winRect = new Rect(Frame.Left + 1, Frame.Top + 1, width + 2, height + 3);
-    var win = new Window(winRect, "Select");
+    var winRect = new Rect(winX, winY, width + 2, height + 3);
+    var win = new Window(winRect, "Choose");
     tl.Add(win);
 
     var list = new ListView(keys);
     list.SelectedItem = keys.IndexOf(_selection);
 
-    var btn = new Button("Ok", true);
+    var btn = new Button((width - 8) / 2, height, "Ok", true);
     btn.Clicked += () => tl.Running = false;
 
     win.Add(list);
     win.Add(btn);
     Application.Run(tl);
     _selection = keys[list.SelectedItem];
+    Text = _selection;
+    SetNeedsDisplay();
   }
 }
