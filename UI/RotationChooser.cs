@@ -57,11 +57,9 @@ public class RotationChooser: Chooser
 
   private const string DefaultSelection = "No Rotation";
 
-  private string _selection = DefaultSelection;
-
   public RotationChooser(int x, int y): base(x, y, _transforms.Keys.ToList(), DefaultSelection)
   {
   }
 
-  public Func<Point, Point> SelectedTransform => _transforms[_selection];
+  public Func<Point, Point> SelectedTransform => _transforms[_transforms.Keys.ToList()[Selection]];
 }
