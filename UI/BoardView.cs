@@ -14,17 +14,18 @@ public class BoardView: View
 
     private InputMode _inputMode = InputMode.Editing;
 
-    private Point _focus;
     private Point _offset;
-    private readonly ILifeGameInterface _game;
+    private ILifeGameInterface _game;
 
     public BoardView(int x, int y, int width, int height)
     : base(new Rect(x, y, width, height))
     {
         _offset = new Point(0, 0);
-        _focus = new Point(1, 1);
+        Focus = new Point(1, 1);
         _game = new Life.LifeGame();
     }
+
+    public Point Focus { get; set; }
 
     public event Action Updated = delegate { };
 
@@ -67,40 +68,48 @@ public class BoardView: View
         }
     }
 
+    private void MoveFocus(int xdelta, int ydelta)
+    {
+        var pt = Focus;
+        pt.X += xdelta;
+        pt.Y += ydelta;
+        Focus = pt;
+    }
+
     private bool EditModeProcessKey(KeyEvent keyEvent)
     {
         switch (keyEvent.Key)
         {
             case Key.CursorUp:
-                if (_focus.Y > 1)
+                if (Focus.Y > 1)
                 {
-                    _focus.Y -= 1; 
+                    MoveFocus(0, -1);
                 }
                 SetNeedsDisplay();
                 return true;
             case Key.CursorDown:
-                if (_focus.Y < (Frame.Bottom - 1))
+                if (Focus.Y < (Frame.Bottom - 1))
                 {
-                    _focus.Y += 1;
+                    MoveFocus(0, 1);
                 }
                 SetNeedsDisplay();
                 return true;
             case Key.CursorLeft: 
-                if (_focus.X > 1)
+                if (Focus.X > 1)
                 {
-                    _focus.X -= 1;
+                    MoveFocus(-1, 0);
                 }
                 SetNeedsDisplay();
                 return true;
             case Key.CursorRight:
-                if (_focus.X < (Frame.Right - 1))
+                if (Focus.X < (Frame.Right - 1))
                 {
-                    _focus.X += 1;
+                    MoveFocus(1, 0);
                 }
                 SetNeedsDisplay();
                 return true;
             case Key.Space:
-                Toggle(_focus.X + _offset.X, _focus.Y + _offset.Y);
+                Toggle(Focus.X + _offset.X, Focus.Y + _offset.Y);
                 SetNeedsDisplay();
                 return true;
             default: 
@@ -132,12 +141,12 @@ public class BoardView: View
 
     public void Add(int x, int y)
     {
-        _game.Add(x + _focus.X, y + _focus.Y);
+        _game.Add(x + Focus.X, y + Focus.Y);
     }
 
     public void Remove(int x, int y)
     {
-        _game.Remove(x + _focus.X, y + _focus.Y);
+        _game.Remove(x + Focus.X, y + Focus.Y);
     }
 
     private void Toggle(int x, int y)
@@ -159,7 +168,7 @@ public class BoardView: View
         {
             for (var x = region.Left; x < region.Right; ++x) 
             {
-                if (HasFocus && _inputMode == InputMode.Editing && _focus.X == x && _focus.Y == y)
+                if (HasFocus && _inputMode == InputMode.Editing && Focus.X == x && Focus.Y == y)
                 {
                     Driver.SetAttribute(ColorScheme.Focus);
                 }
@@ -172,6 +181,12 @@ public class BoardView: View
                 Driver.AddRune(draw);
             }
         }
+    }
+
+    public void ClearBoard()
+    {
+        _game = new Life.LifeGame();
+        SetNeedsDisplay();
     }
 
     internal void BeginEditMode(Window win)

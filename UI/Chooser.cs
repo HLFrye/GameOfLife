@@ -20,6 +20,8 @@ public class Chooser: Button
     Clicked += ShowChoiceDialog;
   }
   
+  public event Action Changed = delegate { };
+
   public int Selection { get; private set; }
 
   private void ShowChoiceDialog()
@@ -55,6 +57,7 @@ public class Chooser: Button
     Application.Run(tl);
     Selection = list.SelectedItem;
     Text = _choices[Selection];
+    Changed();
     SetNeedsDisplay();
   }
 }

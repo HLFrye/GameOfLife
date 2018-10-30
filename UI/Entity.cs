@@ -30,7 +30,7 @@ public class Entity
       }
       y++;
     }
-    bounds = new Rect(0, 0, mw, mh);
+    bounds = new Rect(0, 0, mw+1, mh+1);
     return cells;
   }
 
