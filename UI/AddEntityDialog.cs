@@ -33,7 +33,7 @@ public class AddEntityDialog: Toplevel
     cancelBtn.Clicked += Cancel;
 
     var rotationLabel = new Label(1, 1, "Rotation");
-    _rotationChooser = new RotationChooser(rotationLabel.Frame.Right + 3, 1);
+    _rotationChooser = new RotationChooser(rotationLabel.Frame.Right + 3, 1, entity);
     _rotationChooser.Changed += Redraw;
 
     var invertLabel = new Label(1, 3, "Inversion");
