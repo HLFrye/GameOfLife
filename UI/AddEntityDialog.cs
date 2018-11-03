@@ -20,10 +20,9 @@ public class AddEntityDialog: Toplevel
     Add(win);
 
     var previewSize = PreviewRect(entity.Size);
-    Console.WriteLine($"Preview Size: {previewSize.Width}x{previewSize.Width}");
     var demoFrame = new FrameView(previewSize, "Preview");
     _demoBoard = new BoardView(0, 0, previewSize.Width - 2, previewSize.Height - 2);
-    _demoBoard.Focus = new Point(0, 0);
+    _demoBoard.Focus = new Point(2, 2);
     demoFrame.Add(_demoBoard);
 
     var closeBtn = new Button(3, rect.Height - 3, "Add", true);
@@ -85,7 +84,7 @@ public class AddEntityDialog: Toplevel
     var maxHeight = Math.Max(size.Height, 10);
 
     var viewSize = Math.Max(maxWidth, maxHeight);
-    viewSize += 2;
+    viewSize += 6;
     return viewSize;
   }
 

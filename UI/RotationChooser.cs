@@ -50,24 +50,25 @@ public class RotationChooser: Chooser
     var maxX = _entity.Cells.Max(x => x.X);
     var maxY = _entity.Cells.Max(x => x.Y);
 
-    if (maxX % 2 == 0) maxX+=2;
-    if (maxY % 2 == 0) maxY+=2;
+    // if (maxX % 2 == 0) maxX+=2;
+    // if (maxY % 2 == 0) maxY+=2;
 
-    var centerPoint = new Point(maxX / 2, maxY / 2);
+    var centerX = maxX / 2.0;
+    var centerY = maxY / 2.0;
 
     return point => 
     {
-      var newX = 
+      var newX = Math.Ceiling(
         point.X * IntCos(angle) - 
         point.Y * IntSin(angle) +
-        -centerPoint.X * IntCos(angle) + centerPoint.X + centerPoint.Y * IntSin(angle);
+        -centerX * IntCos(angle) + centerX + centerY * IntSin(angle));
 
-      var newY = 
+      var newY = Math.Ceiling(
         point.X * IntSin(angle) + 
         point.Y * IntCos(angle) +
-        -centerPoint.X * IntSin(angle) - centerPoint.Y * IntCos(angle) + centerPoint.Y;
+        -centerX * IntSin(angle) - centerY * IntCos(angle) + centerY);
 
-      var newPt = new Point(newX, newY);
+      var newPt = new Point((int)newX, (int)newY);
       return newPt;
     };
   }
