@@ -8,8 +8,8 @@ public static class Entities
 
   public static Entity StillLife => new Entity("Still Life", new []{"OOO", "OOO", "OOO"});
   public static Entity Oscillator => new Entity("Oscillator", new []{"OOO"});
-  public static Entity Glider => new Entity(GetEmbeddedStream("Glider.cells"));
-  public static Entity GliderGun => new Entity(GetEmbeddedStream("GliderGun.cells"));
-  public static Entity PufferTrain => new Entity(GetEmbeddedStream("HiveNudger2.cells"));
-  public static Entity RPentomino => new Entity(GetEmbeddedStream("RPentomino.cells"));
+  public static Entity Glider => new Entity("Glider", GetEmbeddedStream("Glider.cells"));
+  public static Entity GliderGun => new Entity("Glider Gun", GetEmbeddedStream("GliderGun.cells"));
+  public static Entity PufferTrain => new Entity("Puffer Train", GetEmbeddedStream("HiveNudger2.cells"));
+  public static Entity RPentomino => new Entity("R-Pentomino", GetEmbeddedStream("RPentomino.cells"));
 }

@@ -39,15 +39,74 @@ public class AddEntityDialog: Toplevel
     _invertChooser = new InversionChooser(invertLabel.Frame.Right + 2, 3, entity);
     _invertChooser.Changed += Redraw;
 
+    var nameLabel = new Label(1, 5, $"Name: {entity.Name}");
+
+    var descOffset = 7;
+    if (!string.IsNullOrEmpty(entity.FullName) && !entity.FullName.Equals(entity.Name))
+    {
+      descOffset = 9;
+      var fullNameLabel = new Label(1, 7, $"Full Name: {entity.FullName}");
+      win.Add(fullNameLabel);
+    }
+    
+    var descSize = previewSize.X - 1;
+    var labels =
+      SplitLines(descSize, entity.Description)
+      .Select((text, lineNum) => new Label(1, descOffset+lineNum, text));
+
     win.Add(rotationLabel);
     win.Add(_rotationChooser);
     win.Add(invertLabel);
     win.Add(_invertChooser);
+    win.Add(nameLabel);
+    foreach (var label in labels)
+    {
+      win.Add(label);
+    }
     win.Add(demoFrame);
     win.Add(closeBtn);
     win.Add(cancelBtn);
 
     Redraw();
+  }
+
+  private IEnumerable<string> SplitLines(int descSize, string description)
+  {
+    var remaining = description;
+    while (!string.IsNullOrEmpty(remaining))
+    {
+      int? lastspace = null;
+      for (var i = 0; true; ++i)
+      {
+        if (i == remaining.Length)
+        {
+          yield return remaining;
+          remaining = "";
+          break;
+        }
+
+        if (i == descSize)
+        {
+          var breakAt = lastspace ?? descSize;
+          var skipSpace = lastspace.HasValue ? 1 : 0;
+          yield return remaining.Substring(0, breakAt);
+          remaining = remaining.Substring(breakAt + skipSpace);
+          break;
+        }
+
+        if (remaining[i] == ' ')
+        {
+          lastspace = i;
+        }
+
+        if (remaining[i] == '\n')
+        {
+          yield return remaining.Substring(0, i);
+          remaining = remaining.Substring(i+1);
+          break;
+        }
+      }
+    }
   }
 
   private void Redraw()

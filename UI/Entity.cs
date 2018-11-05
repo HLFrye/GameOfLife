@@ -42,11 +42,12 @@ public class Entity
     Cells = ReadLines(lines, out Rect size);
     Size = size;
   }
-  public Entity(Stream stream)
+  public Entity(string name, Stream stream)
   {
+    Name = name;
     using (var reader = new StreamReader(stream))
     {
-      Name = reader.ReadLine().Substring(7);
+      FullName = reader.ReadLine().Substring(7);
       var map = new List<string>();
       while (!reader.EndOfStream)
       {
@@ -55,7 +56,7 @@ public class Entity
         {
           if (!string.IsNullOrEmpty(Description))
             Description += "\n";
-          Description += line.Substring(0);
+          Description += line.Substring(1);
         }
         else
         {
@@ -68,6 +69,7 @@ public class Entity
   }
 
   public string Name { get; private set; }
+  public string FullName { get; private set; }
   public string Description { get; private set; }
   public IList<Point> Cells { get; private set; }
   public Rect Size { get; private set; }
