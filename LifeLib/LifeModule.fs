@@ -90,4 +90,15 @@ module Life =
                 with get() = 
                     points
                     |> List.length
+            member this.GetWithin (x: int, y: int, width: int, height: int) =
+                points
+                |> List.filter(fun (ptX, ptY) ->
+                    ptX >= x && ptX <= (x + width) && ptY >= y && ptY <= (y + height))
+                |> System.Collections.Generic.List<int * int>
+                :> System.Collections.Generic.IList<int * int>
+                
+
+
+//        IList<Tuple<int, int>> GetWithin(int x, int y, int width, int height);
+
 

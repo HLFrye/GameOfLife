@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using Terminal.Gui;
@@ -83,12 +84,12 @@ class GameOfLifeApplication
                 new MenuItem ("_Quit", "", () => { if (Quit ()) top.Running = false; })
             }),
             new MenuBarItem ("_Insert", new MenuItem [] {
-                new MenuItem("Still Life", "", Insert(BoardView, Entities.StillLife)),
-                new MenuItem("Oscillator", "", Insert(BoardView, Entities.Oscillator)),
-                new MenuItem("Glider", "", Insert(BoardView, Entities.Glider)),
-                new MenuItem("Glider Gun", "", Insert(BoardView, Entities.GliderGun)),
-                new MenuItem("Puffer Train", "", Insert(BoardView, Entities.PufferTrain)),
-                new MenuItem("R-Pentomino", "", Insert(BoardView, Entities.RPentomino))
+                new MenuItem("Still Life", "", Insert(win, BoardView, Entities.StillLife)),
+                new MenuItem("Oscillator", "", Insert(win, BoardView, Entities.Oscillator)),
+                new MenuItem("Glider", "", Insert(win, BoardView, Entities.Glider)),
+                new MenuItem("Glider Gun", "", Insert(win, BoardView, Entities.GliderGun)),
+                new MenuItem("Puffer Train", "", Insert(win, BoardView, Entities.PufferTrain)),
+                new MenuItem("R-Pentomino", "", Insert(win, BoardView, Entities.RPentomino))
             }),
             new MenuBarItem("_Help", new MenuItem [] {
                 new MenuItem("_About", "", HelpAbout)
@@ -176,7 +177,7 @@ class GameOfLifeApplication
     throw new NotImplementedException();
   }
 
-  private static Action Insert(BoardView game, Entity stillLife)
+  private static Action Insert(Window win, BoardView game, Entity stillLife)
   {
     return () => 
     {
@@ -185,10 +186,7 @@ class GameOfLifeApplication
       Application.Run(dlg);
       if (dlg.Success)
       {
-        foreach (var point in dlg.Cells)
-        {
-          game.Add(point.X, point.Y);
-        }
+        game.BeginAddEntityMode(win, dlg.Cells.ToList());
       }  
       Application.Refresh();
     };

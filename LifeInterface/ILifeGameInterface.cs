@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LifeInterface
 {
@@ -9,5 +10,6 @@ namespace LifeInterface
         void Remove(int x, int y);
         bool Update();
         int CellCount { get; }
+        IList<Tuple<int, int>> GetWithin(int x, int y, int width, int height);
     }
 }

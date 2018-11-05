@@ -3,13 +3,17 @@ using Terminal.Gui;
 using LifeInterface;
 using LifeLib;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 public class BoardView: View 
 {
     public enum InputMode
     {
+        None,
         Editing,
-        Moving
+        Moving,
+        AddingEntity
     }
 
     private InputMode _inputMode = InputMode.Editing;
@@ -35,6 +39,8 @@ public class BoardView: View
     {
         switch (_inputMode)
         {
+            case InputMode.AddingEntity:
+                return AddEntityModeProcessKey(keyEvent);
             case InputMode.Editing:
                 return EditModeProcessKey(keyEvent);
             case InputMode.Moving:
@@ -74,6 +80,53 @@ public class BoardView: View
         pt.X += xdelta;
         pt.Y += ydelta;
         Focus = pt;
+    }
+
+    private bool AddEntityModeProcessKey(KeyEvent keyEvent)
+    {
+        switch (keyEvent.Key)
+        {
+            case Key.CursorUp:
+                if (Focus.Y > 1)
+                {
+                    MoveFocus(0, -1);
+                }
+                SetNeedsDisplay();
+                return true;
+            case Key.CursorDown:
+                if (Focus.Y + _entityToAddMaxY < (Frame.Bottom - 1))
+                {
+                    MoveFocus(0, 1);
+                }
+                SetNeedsDisplay();
+                return true;
+            case Key.CursorLeft: 
+                if (Focus.X > 1)
+                {
+                    MoveFocus(-1, 0);
+                }
+                SetNeedsDisplay();
+                return true;
+            case Key.CursorRight:
+                if (Focus.X + _entityToAddMaxX < (Frame.Right - 1))
+                {
+                    MoveFocus(1, 0);
+                }
+                SetNeedsDisplay();
+                return true;
+            case Key.Space:
+                foreach (var pt in _entityToAdd)
+                {
+                    _game.Add(pt.X + Focus.X, pt.Y + Focus.Y);
+                }
+                _inputMode = InputMode.None;
+                FocusNext();
+                
+                SetNeedsDisplay();
+                return true;
+            default: 
+                return false;
+        }
     }
 
     private bool EditModeProcessKey(KeyEvent keyEvent)
@@ -161,26 +214,64 @@ public class BoardView: View
         }
     }
 
+    // public override void Redraw(Rect region)
+    // {
+    //     Clear();
+    //     for (var y = region.Top; y < region.Bottom; ++y)
+    //     {
+    //         for (var x = region.Left; x < region.Right; ++x) 
+    //         {
+    //             if (HasFocus && _inputMode == InputMode.Editing && Focus.X == x && Focus.Y == y)
+    //             {
+    //                 Driver.SetAttribute(ColorScheme.Focus);
+    //             }
+    //             else
+    //             {
+    //                 Driver.SetAttribute(ColorScheme.Normal);
+    //             }
+    //             Move(x, y);
+    //             var draw = _game.Get(x + _offset.X, y + _offset.Y) ? 'x' : ' ';
+    //             Driver.AddRune(draw);
+    //         }
+    //     }
+    // }
+
     public override void Redraw(Rect region)
     {
         Clear();
-        for (var y = region.Top; y < region.Bottom; ++y)
+        var drewFocus = false;
+        foreach (var pt in _game.GetWithin(region.Top, region.Left, region.Width, region.Height))
         {
-            for (var x = region.Left; x < region.Right; ++x) 
+            if (HasFocus && _inputMode == InputMode.Editing && Focus.X == pt.Item1 && Focus.Y == pt.Item2)
             {
-                if (HasFocus && _inputMode == InputMode.Editing && Focus.X == x && Focus.Y == y)
-                {
-                    Driver.SetAttribute(ColorScheme.Focus);
-                }
-                else
-                {
-                    Driver.SetAttribute(ColorScheme.Normal);
-                }
-                Move(x, y);
-                var draw = _game.Get(x + _offset.X, y + _offset.Y) ? 'x' : ' ';
-                Driver.AddRune(draw);
+                Driver.SetAttribute(ColorScheme.Focus);
+                drewFocus = true;
+            }
+            else
+            {
+                Driver.SetAttribute(ColorScheme.Normal);
+            }
+            Move(pt.Item1, pt.Item2);
+            Driver.AddRune('x');
+        }
+
+        if (HasFocus && _inputMode == InputMode.Editing && !drewFocus)
+        {
+            Driver.SetAttribute(ColorScheme.Focus);
+            Move(Focus.X, Focus.Y);
+            Driver.AddRune(' ');
+        }
+
+        if (_inputMode == InputMode.AddingEntity)
+        {
+            Driver.SetAttribute(ColorScheme.Focus);
+            foreach (var pt in _entityToAdd)
+            {
+                Move(pt.X + Focus.X, pt.Y + Focus.Y);
+                Driver.AddRune('x');
             }
         }
+        Driver.SetAttribute(ColorScheme.Normal);
     }
 
     public void ClearBoard()
@@ -209,6 +300,27 @@ public class BoardView: View
         {
             CanFocus = true;
             _inputMode = InputMode.Moving;
+            win.SetFocus(this);
+        }
+        finally
+        {
+            CanFocus = false;
+        }
+    }
+
+    private IList<Point> _entityToAdd = null;
+    private int _entityToAddMaxX;
+    private int _entityToAddMaxY;
+
+    internal void BeginAddEntityMode(Window win, IList<Point> cells)
+    {
+        try
+        {
+            CanFocus = true;
+            _inputMode = InputMode.AddingEntity;
+            _entityToAdd = cells;
+            _entityToAddMaxX = cells.Max(x => x.X);
+            _entityToAddMaxY = cells.Max(x => x.Y);
             win.SetFocus(this);
         }
         finally
