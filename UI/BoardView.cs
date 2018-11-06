@@ -54,19 +54,19 @@ public class BoardView: View
         switch (keyEvent.Key)
         {
             case Key.CursorUp:
-                _offset.Y -= 1;
-                SetNeedsDisplay();
-                return true;
-            case Key.CursorDown:
                 _offset.Y += 1;
                 SetNeedsDisplay();
                 return true;
+            case Key.CursorDown:
+                _offset.Y -= 1;
+                SetNeedsDisplay();
+                return true;
             case Key.CursorLeft: 
-                _offset.X -= 1;
+                _offset.X += 1;
                 SetNeedsDisplay();
                 return true;
             case Key.CursorRight:
-                _offset.X += 1;
+                _offset.X -= 1;
                 SetNeedsDisplay();
                 return true;
             default: 
@@ -87,7 +87,7 @@ public class BoardView: View
         switch (keyEvent.Key)
         {
             case Key.CursorUp:
-                if (Focus.Y > 1)
+                if (Focus.Y > 0)
                 {
                     MoveFocus(0, -1);
                 }
@@ -101,7 +101,7 @@ public class BoardView: View
                 SetNeedsDisplay();
                 return true;
             case Key.CursorLeft: 
-                if (Focus.X > 1)
+                if (Focus.X > 0)
                 {
                     MoveFocus(-1, 0);
                 }
@@ -117,7 +117,7 @@ public class BoardView: View
             case Key.Space:
                 foreach (var pt in _entityToAdd)
                 {
-                    _game.Add(pt.X + Focus.X, pt.Y + Focus.Y);
+                    _game.Add(pt.X + Focus.X - _offset.X, pt.Y + Focus.Y - _offset.Y);
                 }
                 _inputMode = InputMode.None;
                 FocusNext();
@@ -134,7 +134,7 @@ public class BoardView: View
         switch (keyEvent.Key)
         {
             case Key.CursorUp:
-                if (Focus.Y > 1)
+                if (Focus.Y > 0)
                 {
                     MoveFocus(0, -1);
                 }
@@ -148,7 +148,7 @@ public class BoardView: View
                 SetNeedsDisplay();
                 return true;
             case Key.CursorLeft: 
-                if (Focus.X > 1)
+                if (Focus.X > 0)
                 {
                     MoveFocus(-1, 0);
                 }
@@ -162,7 +162,7 @@ public class BoardView: View
                 SetNeedsDisplay();
                 return true;
             case Key.Space:
-                Toggle(Focus.X + _offset.X, Focus.Y + _offset.Y);
+                Toggle(Focus.X - _offset.X, Focus.Y - _offset.Y);
                 SetNeedsDisplay();
                 return true;
             default: 
@@ -236,13 +236,18 @@ public class BoardView: View
     //     }
     // }
 
+    public override void PositionCursor ()
+    {
+        Move(Focus.X, Focus.Y);   
+    }
+
     public override void Redraw(Rect region)
     {
         Clear();
         var drewFocus = false;
-        foreach (var pt in _game.GetWithin(region.Top, region.Left, region.Width, region.Height))
+        foreach (var pt in _game.GetWithin(region.Left - _offset.X, region.Top - _offset.Y, region.Width - 1, region.Height - 1))
         {
-            if (HasFocus && _inputMode == InputMode.Editing && Focus.X == pt.Item1 && Focus.Y == pt.Item2)
+            if (HasFocus && _inputMode == InputMode.Editing && Focus.X == pt.Item1 + _offset.X && Focus.Y == pt.Item2 + _offset.Y)
             {
                 Driver.SetAttribute(ColorScheme.Focus);
                 drewFocus = true;
@@ -251,7 +256,7 @@ public class BoardView: View
             {
                 Driver.SetAttribute(ColorScheme.Normal);
             }
-            Move(pt.Item1, pt.Item2);
+            Move(pt.Item1 + _offset.X, pt.Item2 + _offset.Y);
             Driver.AddRune('x');
         }
 
@@ -265,9 +270,13 @@ public class BoardView: View
         if (_inputMode == InputMode.AddingEntity)
         {
             Driver.SetAttribute(ColorScheme.Focus);
-            foreach (var pt in _entityToAdd)
+            var entityToAddPts = _entityToAdd
+                .Select(x => new Point(x.X + Focus.X, x.Y + Focus.Y))
+                .Where(x => x.X > 0 && x.X < region.Width - 1 && x.Y > 0 && x.Y < region.Height - 1);
+
+            foreach (var pt in entityToAddPts)
             {
-                Move(pt.X + Focus.X, pt.Y + Focus.Y);
+                Move(pt.X, pt.Y);
                 Driver.AddRune('x');
             }
         }
