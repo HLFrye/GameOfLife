@@ -97,8 +97,3 @@ module Life =
                 |> System.Collections.Generic.List<int * int>
                 :> System.Collections.Generic.IList<int * int>
                 
-
-
-//        IList<Tuple<int, int>> GetWithin(int x, int y, int width, int height);
-
-
